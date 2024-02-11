@@ -27,10 +27,23 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): CustomerResource
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'tel' => 'required',
+            'is_favourite' => 'nullable|boolean'
+        ]);
+
+        $customer = Customer::create([
+            'name' => $request->name,
+            'tel' => $request->tel,
+            'is_favourite' => $request->is_favourite ?? 0,
+        ]);
+
+        return new CustomerResource($customer);
     }
+
 
     /**
      * Display the specified resource.
