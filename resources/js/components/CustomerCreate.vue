@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import { reactive } from "vue";
-import useCustomers from "../services/customerservices.js";
+import { ref, reactive } from "vue";
+import { createCustomer, errors } from "../services/customerservices.js";
 
 export default {
     setup() {
@@ -34,8 +34,6 @@ export default {
             tel: "",
             is_favourite: "",
         });
-
-        const { createCustomer, errors } = useCustomers();
 
         const storeCustomer = async () => {
             await createCustomer({ ...form });

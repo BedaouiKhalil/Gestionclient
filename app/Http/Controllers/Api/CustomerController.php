@@ -44,16 +44,15 @@ class CustomerController extends Controller
         return new CustomerResource($customer);
     }
 
-
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function show(Customer $customer)
+    public function show(Customer $customer): CustomerResource
     {
-        //
+        return CustomerResource::make($customer);
     }
 
     /**
@@ -63,9 +62,17 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, Customer $customer): CustomerResource
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'tel' => 'required',
+            'is_favourite' => 'required|boolean'
+        ]);
+
+        $customer->update($request->only(['name', 'tel', 'is_favourite']));
+
+        return new CustomerResource($customer);
     }
 
     /**
@@ -74,8 +81,10 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy(Customer $customer): Response
     {
-        //
+        $customer->delete();
+
+        return response()->noContent();
     }
 }

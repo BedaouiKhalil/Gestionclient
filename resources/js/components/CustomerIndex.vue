@@ -1,7 +1,9 @@
-<template lang="">
+<template>
     <div class="flex flex-col">
         <div class="flex mb-3">
-            <router-link :to="{ name: 'customers.create' }" class="bg-success"
+            <router-link
+                :to="{ name: 'customers.create' }"
+                class="bg-green rounded"
                 >Créer un client</router-link
             >
         </div>
@@ -32,6 +34,9 @@
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                 >
                                     Is Favourite ?
+                                </th>
+                                <th scope="col" class="relative px-6 py-3">
+                                    <span class="sr-only">Actions</span>
                                 </th>
                             </tr>
                         </thead>
@@ -68,6 +73,27 @@
                                         >
                                         </span>
                                     </td>
+                                    <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        Admin
+                    </td> -->
+                                    <td
+                                        class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                                    >
+                                        <router-link
+                                            :to="{
+                                                name: 'customers.edit',
+                                                params: { id: customer.id },
+                                            }"
+                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            >Éditer</router-link
+                                        >
+                                        <button
+                                            @click="deleteCustomer(customer.id)"
+                                            class="text-red-600 hover:text-red-900"
+                                        >
+                                            Supprimer
+                                        </button>
+                                    </td>
                                 </tr>
                             </template>
                         </tbody>
@@ -77,20 +103,28 @@
         </div>
     </div>
 </template>
+
 <script>
-import { onMounted } from "vue";
-import useCustomers from "../services/customerservices.js";
+import { ref, onMounted } from "vue";
+import { getCustomers, destroyCustomer } from "../services/customerservices.js";
 
 export default {
     setup() {
-        const { customers, getCustomers } = useCustomers();
+        const customers = ref([]);
 
-        onMounted(getCustomers);
+        const deleteCustomer = async (id) => {
+            await destroyCustomer(id);
+            customers.value = await getCustomers();
+        };
+
+        onMounted(async () => {
+            customers.value = await getCustomers();
+        });
 
         return {
             customers,
+            deleteCustomer,
         };
     },
 };
 </script>
-<style lang=""></style>
